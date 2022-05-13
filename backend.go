@@ -3,11 +3,14 @@ package main
 import (
     "bytes"
     "fmt"
+    "io"
     "io/ioutil"
-    "net/http" 
+    "time"
+    "net/http"
+    "log"
 )
 
-func Decoded(body string) string {
+func Decoded(body string){
 
 }
 
@@ -25,13 +28,23 @@ func RequestData() string {
     }
     return string(body)
 
-    }
+}
 
-
+func TrainsData(resp http.ResponseWriter, req *http.Request) {
+	data := RequestData()
+	io.WriteString(resp, data)
+	fmt.Println(resp)
+}
 func main() {
-	var srv http.Server
-	srv.string = ":https"
-	app := http.NewServeMux()
+	srv := &http.Server{
+		Addr: ":8080",
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+	}
 	RequestData()
+
+	http.HandleFunc("/trainstimetable", TrainsData)
+
+	log.Fatal(srv.ListenAndServe())
 
 }
